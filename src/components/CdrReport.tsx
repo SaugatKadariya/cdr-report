@@ -2,38 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import Logo from "../assets/icons/Logo";
+import AmericanExpress from "../assets/icons/AmericanExpress";
 import MasterCard from "../assets/icons/MasterCard";
 import { VisaCard } from "../assets/icons/VisaCard";
-import AmericanExpress from "../assets/icons/AmericanExpress";
-import Cross from "../assets/icons/Cross";
-import Star from "../assets/icons/Star";
-
-
-const formSchema = z.object({
-  email: z.string().email({ message: 'Please enter your email' }),
-  name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
-  address: z.string().min(5, { message: 'Address is too short' }),
-  city: z.string().min(2, { message: 'City is required' }),
-  state: z.string().min(2, { message: 'State is required' }),
-  country: z.string().min(2, { message: 'Country is required' }),
-  cardNumber: z
-    .string()
-    .min(19, { message: 'Card number must be 16 digits with spaces' })
-    .regex(/^(\d{4} \d{4} \d{4} \d{4})$/, {
-      message: 'Card number must be in format 4242 4242 4242 4242',
-    })
-   ,
-
-  expiryDate: z
-    .string()
-    .regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, {
-      message: 'Expiry date must be in MM/YY format',
-    }),
-
-  cvc: z.string().regex(/^\d{3,4}$/, { message: 'CVC must be 3 or 4 digits' }),
-});
-
+import { formSchema } from "./formSchema";
+import LeftSide from "./LeftSide";
+import PaymentModal from "./PaymentModal";
 
 type FormData = z.infer<typeof formSchema>;
 function CdrReport() {
@@ -93,51 +67,7 @@ const anyEmpty = watchedFields.some(field => !field || field.trim() === '');
     <div className="flex w-full h-screen">
 
       {/* Left Panel - Fixed, no scroll */}
-      <div className="w-1/2 bg-[#4B1FB8] pt-12 pl-[72px] flex items-start polygon overflow-hidden">
-        <div className="max-w-[465px] w-full">
-          {/* Logo */}
-          <div className="pb-[72px]">
-            <Logo />
-          </div>
-
-          <p className="text-[#BBB4FE] text-lg pb-2">Pay CDR Writer</p>
-          <p className="text-[#F4F3FF] font-semibold text-[40px] pb-[72px]">
-            AUD$799{' '}
-            <span className="text-[#EBE9FE] text-lg font-normal">
-              (Standard Package)
-            </span>
-          </p>
-
-          <div className="flex justify-between items-center text-[#EBE9FE] text-[20px]">
-            <span>Subtotal:</span>
-            <span>AUD$799</span>
-          </div>
-
-          <hr className="mt-4 mb-8 border border-[#6838EF]" />
-
-          <div className="flex justify-between items-center text-[#EBE9FE] text-[20px] pb-6">
-            <span>Deposit Paid:</span>
-            <span>AUD$200</span>
-          </div>
-
-          <div className="flex justify-between items-center text-[#EBE9FE] text-[20px] pb-6">
-            <span>Tax:</span>
-            <span>AUD$0.00</span>
-          </div>
-
-          <div className="flex justify-between items-center text-[#EBE9FE] text-[20px] pb-6">
-            <span>Remaining Balance:</span>
-            <span>AUD$599</span>
-          </div>
-
-          <hr className="mb-8 border border-[#6838EF]" />
-
-          <div className="flex justify-between items-center text-[#F4F3FF] text-[20px] font-semibold">
-            <span>Total Due:</span>
-            <span>AUD$599</span>
-          </div>
-        </div>
-      </div>
+   <LeftSide />
 
       <div className="w-1/2 bg-white overflow-y-auto">
         <div className="pt-12 pl-[70px] pb-12">
@@ -176,7 +106,7 @@ className={`mt-1 block w-full border ${errors.email?.message ? 'border-red-500' 
     {...register("cardNumber")}
     placeholder="4242 4242 4242 4242"
     maxLength={19}
-    className="w-full outline-none pr-28" // add padding so text doesn't overlap icons
+    className="w-full outline-none pr-28" 
     onChange={handleCardNumberChange}
   />
 
@@ -305,71 +235,8 @@ Powered by <span>Stripe</span>
     </div>
       </div>
    {modal && (
-  <div className="fixed inset-0 bg-[#000000]/60 flex items-center justify-center z-50 ">
-    <div className="bg-white p-6 rounded-xl shadow-lg w-[540px]">
-      <div className='flex justify-end mb-5 cursor-pointer'         onClick={() => setModal(false)}>
-        
-      <Cross />
-      </div>
-      <div className='flex flex-col items-center justify-center'>
-
-      <Star />
-      <p className="text-xl font-semibold mb-4 text-[#31343A]">Payment Successful</p>
-      <p className='text-[#6C6C6C] pb-10'>Successfully paid $599</p>
-      </div>
-      <p className='text-[#404348] font-medium pb-3'>Payment details</p>
-      <div className='border-dotted border border-[#ECECEC] bg-[#F9FAFB] rounded-lg p-6'>
-        <div className='flex flex-col gap-4'>
-
-<div className='flex justify-between items-center'>
-
-  <p className='text-[#6C6C6C]'>Status:</p>
-  <div className='border border-[#D1FAE5] bg-[#ECFDF5] rounded-full py-1 px-3 text-[#047857]'>Success</div>
-</div>
-
-<div className='flex justify-between items-center'>
-
-  <p className='text-[#6C6C6C]'>Transaction ID:</p>
-  <div className='text-[#404348]'>1234 1234 1234</div>
-</div>
-<div className='flex justify-between items-center'>
-
-  <p className='text-[#6C6C6C]'>Date:</p>
-  <div className='text-[#404348]'>6 June</div>
-</div>
-<div className='flex justify-between items-center'>
-
-  <p className='text-[#6C6C6C]'>Type of Transaction:</p>
-  <div className='text-[#404348]'>Credit Card</div>
-</div>
-<div className='flex justify-between items-center'>
-
-  <p className='text-[#6C6C6C]'>Service:</p>
-  <div className='text-[#404348]'>Standard Package</div>
-</div>
-<hr className='border border-[#ECECEC]'/>
-<div className='flex justify-between items-center'>
-
-  <p className='text-[#6C6C6C]'>Total:</p>
-  <div className='text-[#404348]'>AUD$599</div>
-</div>
-        </div>
-      </div>
-       <div className='flex justify-center items-center pt-5'>
-          <p className='text-[#404348] text-sm font-semibold pr-4'>
-
-Powered by <span>Stripe</span>
-          </p>
-          <span className='text-[#ECECEC] pr-1.5'>|</span>
-          <p className='text-[#6C6C6C] text-sm'>Terms</p>
-          <p className='text-[#6C6C6C] text-sm pl-4'>Privacy</p>
-        </div>
-    </div>
-  </div>
+ <PaymentModal modal={modal} setModal={setModal} />
 )}
-
-
-
     </div>
   );
 }
