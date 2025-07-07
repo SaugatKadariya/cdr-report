@@ -1,17 +1,16 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import CdrAustralia from "./components/CdrAustralia";
+import { Elements } from "@stripe/react-stripe-js";
 import CdrReport from "./components/CdrReport";
+import { loadStripe } from "@stripe/stripe-js";
 
 
 
 function App() {
+  
+const stripePromise = loadStripe('pk_test_YourPublicKeyHere');
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<CdrReport />} />
-        <Route path="/report" element={<CdrAustralia />} />
-      </Routes>
-    </Router>
+     <Elements stripe={stripePromise}>
+      <CdrReport />
+    </Elements>
   );
 }
 
