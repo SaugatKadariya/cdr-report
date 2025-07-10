@@ -42,10 +42,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ modal, setModal }) => {
               <p className='text-[#6C6C6C]'>Type of Transaction:</p>
               <div className='text-[#404348]'>Credit Card</div>
             </div>
-            <div className='flex justify-between items-center'>
-              <p className='text-[#6C6C6C]'>Service:</p>
-              <div className='text-[#404348]'>Standard Package</div>
-            </div>
             <hr className='border border-[#ECECEC]' />
             <div className='flex justify-between items-center'>
               <p className='text-[#6C6C6C]'>Total:</p>

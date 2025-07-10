@@ -56,13 +56,15 @@ function CdrReport() {
   const anyEmpty =
     watchedFields.some((field) => !field || field.trim() === '') || !amount;
 const onSubmit = async () => {
+  const numericAmount = Number(amount);
+
   if (!stripe || !elements || !amount) return;
 
   try {
     const res = await fetch('http://54.179.157.41:8080/public/v1/stripes/create-payment-intent', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount }),
+body: JSON.stringify({ amount: Math.round(numericAmount * 100) }),
     });
 
     const data = await res.json();
@@ -78,7 +80,13 @@ const onSubmit = async () => {
     if (result.error) {
       alert('Payment failed: ' + result.error.message);
     } else if (result.paymentIntent?.status === 'succeeded') {
-      setModal(true)
+      await fetch('http://54.179.157.41:8080/public/v1/stripes/success', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ intentId: result.paymentIntent.id }),
+      });
+
+      setModal(true);
     }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
