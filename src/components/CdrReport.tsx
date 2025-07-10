@@ -1,23 +1,24 @@
-import {
-  CardNumberElement,
-  CardExpiryElement,
-  CardCvcElement,
-  useStripe,
-  useElements,
-} from '@stripe/react-stripe-js';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  CardCvcElement,
+  CardExpiryElement,
+  CardNumberElement,
+  useElements,
+  useStripe
+} from '@stripe/react-stripe-js';
+import { getNames } from 'country-list';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import Select from 'react-select';
 import { z } from 'zod';
+import AmericanExpress from '../assets/icons/AmericanExpress';
 import MasterCard from '../assets/icons/MasterCard';
 import { VisaCard } from '../assets/icons/VisaCard';
-import AmericanExpress from '../assets/icons/AmericanExpress';
 import LeftSide from './LeftSide';
 import PaymentModal from './PaymentModal';
 import { formSchema } from './formSchema';
-import { getNames } from 'country-list';
-import Select from 'react-select';
 type FormData = z.infer<typeof formSchema>;
+
 
 function CdrReport() {
   const [modal, setModal] = useState(false);
@@ -25,12 +26,14 @@ function CdrReport() {
 
   const stripe = useStripe();
   const elements = useElements();
-const countryOptions = getNames()
-  .sort((a, b) => a.localeCompare(b)) 
-  .map((country) => ({
-    label: country,
-    value: country,
-  }));
+
+  const countryOptions = getNames()
+    .sort((a, b) => a.localeCompare(b))
+    .map((country) => ({
+      label: country,
+      value: country,
+    }));
+
   const {
     register,
     handleSubmit,
@@ -47,59 +50,45 @@ const countryOptions = getNames()
     'address',
     'city',
     'state',
-    'country',
+    'country', 
   ]);
 
-const anyEmpty = watchedFields.some((field) => !field || field.trim() === '') || !amount;
-
-const onSubmit = async (data: FormData) => {
+  const anyEmpty =
+    watchedFields.some((field) => !field || field.trim() === '') || !amount;
+const onSubmit = async () => {
   if (!stripe || !elements || !amount) return;
 
   try {
-    const res = await fetch('/api/create-payment-intent', {
+    const res = await fetch('http://54.179.157.41:8080/public/v1/stripes/create-payment-intent', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: parseInt(amount) * 100, 
-        name: data.name,
-        email: data.email,
-        address: data.address,
-        city: data.city,
-        state: data.state,
-        country: data.country,
-      }),
+      body: JSON.stringify({ amount }),
     });
 
-    const { clientSecret } = await res.json();
+    const data = await res.json();
+    const clientSecret = data?.data?.client_secret;
+
+    const cardElement = elements.getElement(CardNumberElement);
     const result = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
-        card: elements.getElement(CardNumberElement)!,
-        billing_details: {
-          name: data.name,
-          email: data.email,
-          address: {
-            line1: data.address,
-            city: data.city,
-            state: data.state,
-            country: data.country,
-          },
-        },
+        card: cardElement!,
       },
     });
 
     if (result.error) {
-      console.error(result.error.message);
-      alert(result.error.message);
-    } else {
-      if (result.paymentIntent.status === 'succeeded') {
-        setModal(true);
-      }
+      alert('Payment failed: ' + result.error.message);
+    } else if (result.paymentIntent?.status === 'succeeded') {
+      setModal(true)
     }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    console.error(error);
-    alert('Payment failed.');
+    alert('Something went wrong.');
   }
 };
+
+
+
+
 
 
   return (
