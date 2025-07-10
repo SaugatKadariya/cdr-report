@@ -22,6 +22,12 @@ type FormData = z.infer<typeof formSchema>;
 
 function CdrReport() {
   const [modal, setModal] = useState(false);
+  const [modalData, setModalData] = useState<{
+  transactionId?: string;
+  date?: string;
+  amount?: number;
+  paymentMethod?: string;
+}>({});
   const [amount, setAmount] = useState('');
 
   const stripe = useStripe();
@@ -86,8 +92,16 @@ body: JSON.stringify({ amount: Math.round(numericAmount * 100) }),
         body: JSON.stringify({ intentId: result.paymentIntent.id }),
       });
 
-      setModal(true);
-    }
+  const { id, created, payment_method_types } = result.paymentIntent;
+
+  setModalData({
+    transactionId: id,
+    date: new Date(created * 1000).toLocaleDateString(),
+    amount: numericAmount, // already in dollars
+    paymentMethod: payment_method_types[0],
+  });
+
+  setModal(true);    }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     alert('Something went wrong.');
@@ -327,7 +341,16 @@ body: JSON.stringify({ amount: Math.round(numericAmount * 100) }),
         </div>
       </div>
 
-      {modal && <PaymentModal modal={modal} setModal={setModal} />}
+{modal && (
+  <PaymentModal
+    modal={modal}
+    setModal={setModal}
+    transactionId={modalData.transactionId}
+    date={modalData.date}
+    amount={modalData.amount}
+    paymentMethod={modalData.paymentMethod}
+  />
+)}
     </div>
   );
 }

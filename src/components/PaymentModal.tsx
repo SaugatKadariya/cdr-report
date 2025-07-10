@@ -7,9 +7,13 @@ import Star from '../assets/icons/Star';
 type PaymentModalProps = {
   modal: boolean;
   setModal: (value: boolean) => void;
+  transactionId?: string;
+  date?: string;
+  amount?: number;
+  paymentMethod?: string;
 };
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ modal, setModal }) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({ modal, setModal,transactionId,date,amount,paymentMethod }) => {
   if (!modal) return null;
 
   return (
@@ -32,20 +36,23 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ modal, setModal }) => {
             </div>
             <div className='flex justify-between items-center'>
               <p className='text-[#6C6C6C]'>Transaction ID:</p>
-              <div className='text-[#404348]'>1234 1234 1234</div>
+              <div className='text-[#404348]'>{transactionId ?? ''}</div>
             </div>
             <div className='flex justify-between items-center'>
               <p className='text-[#6C6C6C]'>Date:</p>
-              <div className='text-[#404348]'>6 June</div>
+              <div className='text-[#404348]'>{date
+  ? new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
+  : '—'}
+</div>
             </div>
             <div className='flex justify-between items-center'>
               <p className='text-[#6C6C6C]'>Type of Transaction:</p>
-              <div className='text-[#404348]'>Credit Card</div>
+              <div className='text-[#404348]'>{paymentMethod ?? '—'}</div>
             </div>
             <hr className='border border-[#ECECEC]' />
             <div className='flex justify-between items-center'>
               <p className='text-[#6C6C6C]'>Total:</p>
-              <div className='text-[#404348]'>AUD$599</div>
+              <div className='text-[#404348]'>AUD${amount?.toFixed(2) ?? '—'}</div>
             </div>
           </div>
         </div>
