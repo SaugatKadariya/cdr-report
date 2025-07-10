@@ -92,11 +92,11 @@ const onSubmit = async () => {
 
 
   return (
-    <div className="flex w-full h-screen">
+    <div className="xl:flex w-full h-screen">
 <LeftSide amount={amount} setAmount={setAmount} />
 
-      <div className="w-1/2 bg-white overflow-y-auto">
-        <div className="pt-12 pl-[70px] pb-12 max-w-[540px]">
+      <div className="xl:w-1/2 bg-white overflow-y-auto flex justify-center items-center">
+        <div className="pt-12 xl:pl-[70px] px-4 pb-12 max-w-[540px]">
           <p className="text-[#404348] font-semibold text-2xl">
             <span className="border-b-2 border-[#404348] pb-1">Pay</span>ment
           </p>
