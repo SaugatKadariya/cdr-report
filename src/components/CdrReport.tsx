@@ -70,11 +70,15 @@ const onSubmit = async () => {
     const res = await fetch('http://54.179.157.41:8080/public/v1/stripes/create-payment-intent', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ amount: Math.round(numericAmount * 100) }),
+      body: JSON.stringify({ amount: Math.round(numericAmount * 100) }), 
     });
 
     const data = await res.json();
     const clientSecret = data?.data?.client_secret;
+    if (!clientSecret) {
+      alert('Could not initiate payment.');
+      return;
+    }
 
     const cardElement = elements.getElement(CardNumberElement);
     const result = await stripe.confirmCardPayment(clientSecret, {
@@ -92,26 +96,26 @@ body: JSON.stringify({ amount: Math.round(numericAmount * 100) }),
         body: JSON.stringify({ intentId: result.paymentIntent.id }),
       });
 
-  const { id, created, payment_method_types } = result.paymentIntent;
+      const { id, created, payment_method_types } = result.paymentIntent;
 
-  setModalData({
-    transactionId: id,
-    date: new Date(created * 1000).toLocaleDateString(),
-    amount: numericAmount, // already in dollars
-    paymentMethod: payment_method_types[0],
-  });
+      setModalData({
+        transactionId: id,
+        date: new Date(created * 1000).toLocaleDateString(),
+        amount: numericAmount,
+        paymentMethod: payment_method_types[0],
+      });
 
-  setModal(true);    }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      setModal(true);
+
+      setTimeout(() => {
+        window.location.href = 'https://www.cdrreportwriter.com/';
+      }, 5000);
+    }
   } catch (error) {
-    alert('Something went wrong.');
+    alert('Something went wrong. Please try again.');
+    console.error('Payment error:', error);
   }
 };
-
-
-
-
-
 
   return (
     <div className="xl:flex w-full h-screen">
@@ -139,17 +143,11 @@ body: JSON.stringify({ amount: Math.round(numericAmount * 100) }),
               )}
             </div>
 
-            {/* Card Information */}
             <label className="block mb-2 text-lg font-semibold text-gray-700">
               Card Information
             </label>
 
             <div
-              // className={`rounded border ${
-              //   errors.cardNumber || errors.expiryDate || errors.cvc
-              //     ? 'border-red-500'
-              //     : 'border-[#ECECEC]'
-              // }`}
               className='border-[#ECECEC] border rounded'
             >
               <div className="px-3 py-2 border-b border-[#ECECEC] relative">
@@ -344,7 +342,7 @@ body: JSON.stringify({ amount: Math.round(numericAmount * 100) }),
 {modal && (
   <PaymentModal
     modal={modal}
-    setModal={setModal}
+    // setModal={setModal}
     transactionId={modalData.transactionId}
     date={modalData.date}
     amount={modalData.amount}

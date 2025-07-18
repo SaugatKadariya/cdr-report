@@ -1,27 +1,26 @@
 // src/components/PaymentModal.tsx
 
 import React from 'react';
-import Cross from '../assets/icons/Cross';
 import Star from '../assets/icons/Star';
 
 type PaymentModalProps = {
   modal: boolean;
-  setModal: (value: boolean) => void;
+  // setModal: (value: boolean) => void;
   transactionId?: string;
   date?: string;
   amount?: number;
   paymentMethod?: string;
 };
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ modal, setModal,transactionId,date,amount,paymentMethod }) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({ modal,transactionId,date,amount,paymentMethod }) => {
   if (!modal) return null;
 
   return (
     <div className="fixed inset-0 bg-[#000000]/60 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-xl shadow-lg w-[540px]">
-        <div className='flex justify-end mb-5 cursor-pointer' onClick={() => setModal(false)}>
+        {/* <div className='flex justify-end mb-5 cursor-pointer' onClick={() => setModal(false)}>
           <Cross />
-        </div>
+        </div> */}
         <div className='flex flex-col items-center justify-center'>
           <Star />
           <p className="text-xl font-semibold mb-4 text-[#31343A]">Payment Successful</p>
