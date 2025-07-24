@@ -21,7 +21,7 @@ const LeftSide = ({ amount, setAmount }: { amount: string, setAmount: (val: stri
   };
 
   return (
-   <div className="xl:w-1/2 bg-[#4B1FB8] pt-12 xl:pl-[72px] px-8 flex xl:items-start polygon overflow-hidden items-center xl:h-full h-[400px] xl:justify-start justify-center">
+   <div className="xl:w-1/2 bg-[#4B1FB8] pt-12 xl:pl-[72px] px-8 flex xl:items-start polygon items-center xl:h-screen h-[400px] xl:justify-start justify-center">
         <div className="max-w-[465px] w-full">
           <div className="pb-[72px]">
             <Logo />

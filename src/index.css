@@ -5,3 +5,16 @@
     clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
   }
 }
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-3xl bg-gray-100;
+}
